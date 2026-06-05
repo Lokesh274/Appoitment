@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oh Bother, Can We Talk? 🍯</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Patrick+Hand&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>emailjs.init('y1iyrCip7s-luUGWm');</script>
+<style>
+  :root {
+    --honey: #FFB300;
+    --honey-light: #FFD54F;
+    --honey-dark: #E65100;
+    --red: #E53935;
+    --green: #558B2F;
+    --sky: #81D4FA;
+    --sky-dark: #0288D1;
+    --cream: #FFF8E1;
+    --brown: #5D4037;
+    --light-brown: #8D6E63;
+    --bg: #FFF3E0;
+    --card: #FFFDE7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    min-height: 100vh;
+    font-family: 'Baloo 2', cursive;
+    display: flex; align-items: center; justify-content: center;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Sky + grass bg */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      linear-gradient(180deg, #E1F5FE 0%, #FFF9C4 40%, #FFF3E0 70%);
+  }
+
+  /* Clouds */
+  .cloud {
+    position: fixed; z-index: 0;
+    background: #fff;
+    border-radius: 50px;
+    opacity: 0.75;
+    animation: driftCloud linear infinite;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+  }
+  @keyframes driftCloud {
+    from { transform: translateX(-200px); }
+    to   { transform: translateX(110vw); }
+  }
+
+  /* Floating honey drops */
+  .honeydrop {
+    position: fixed; pointer-events: none; z-index: 0;
+    font-size: 20px;
+    animation: floatHoney ease-in-out infinite;
+    opacity: 0.5;
+  }
+  @keyframes floatHoney {
+    0%,100% { transform: translateY(0) rotate(-5deg); }
+    50%      { transform: translateY(-18px) rotate(5deg); }
+  }
+
+  /* ── screens ── */
+  .screen {
+    display: none; position: relative; z-index: 1;
+    width: 100%; max-width: 580px;
+    padding: 30px 20px 60px;
+    text-align: center;
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .screen.active { display: block; }
+  @keyframes popIn {
+    from { opacity:0; transform: scale(0.88) translateY(20px); }
+    to   { opacity:1; transform: scale(1)    translateY(0); }
+  }
+
+  /* ══════════ SCREEN 1 ══════════ */
+  .pooh-img {
+    font-size: 80px;
+    display: block; margin: 0 auto 10px;
+    animation: poohWobble 2s ease-in-out infinite;
+    filter: drop-shadow(0 6px 12px rgba(255,179,0,0.4));
+  }
+  @keyframes poohWobble {
+    0%,100% { transform: rotate(-4deg) scale(1); }
+    50%      { transform: rotate(4deg) scale(1.07); }
+  }
+
+  .honey-drip {
+    font-size: 13px; letter-spacing: 6px;
+    color: var(--honey);
+    margin-bottom: 8px;
+    font-family: 'Patrick Hand', cursive;
+  }
+
+  .main-q {
+    font-size: clamp(22px, 5vw, 32px);
+    font-weight: 800;
+    color: var(--brown);
+    line-height: 1.35;
+    margin-bottom: 6px;
+    text-shadow: 2px 2px 0 rgba(255,179,0,0.2);
+  }
+  .main-q span { color: var(--honey-dark); }
+
+  .sub-q {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 18px;
+    color: var(--light-brown);
+    margin-bottom: 28px;
+  }
+
+  /* Hundred Acre Wood friends row */
+  .friends-row {
+    display: flex; justify-content: center;
+    gap: 8px; font-size: 30px;
+    margin-bottom: 32px;
+    animation: friendsBob 3s ease-in-out infinite;
+  }
+  @keyframes friendsBob {
+    0%,100%{ transform: translateY(0); }
+    50%    { transform: translateY(-6px); }
+  }
+
+  /* Buttons */
+  .btn-wrap {
+    display: flex; justify-content: center; align-items: center;
+    gap: 16px; flex-wrap: wrap;
+    position: relative;
+    min-height: 70px;
+    margin-bottom: 16px;
+  }
+
+  .btn-yes {
+    background: linear-gradient(135deg, var(--honey), var(--honey-dark));
+    border: 3px solid var(--honey-dark);
+    color: #fff;
+    font-family: 'Baloo 2', cursive;
+    font-size: 16px; font-weight: 800;
+    padding: 14px 36px;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #bf360c, 0 6px 20px rgba(255,179,0,0.4);
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .btn-yes:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 0 #bf360c, 0 10px 28px rgba(255,179,0,0.5);
+  }
+  .btn-yes:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #bf360c;
+  }
+
+  .btn-no {
+    background: var(--cream);
+    border: 2.5px solid var(--light-brown);
+    color: var(--light-brown);
+    font-family: 'Baloo 2', cursive;
+    font-size: 14px; font-weight: 600;
+    padding: 12px 28px;
+    border-radius: 50px;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+    transition: none;
+    user-select: none;
+    box-shadow: 0 3px 0 #a1887f;
+  }
+
+  .taunt-box {
+    background: var(--card);
+    border: 2px dashed var(--honey);
+    border-radius: 16px;
+    padding: 10px 18px;
+    display: inline-block;
+    margin-top: 10px;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 17px;
+    color: var(--honey-dark);
+    min-height: 44px;
+    max-width: 90%;
+  }
+  .taunt-box::before { content: '🍯 '; }
+
+  /* ══════════ SCREEN 2 ══════════ */
+  .s2-icon { font-size: 52px; display:block; margin: 0 auto 10px; }
+
+  .s2-title {
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: 800;
+    color: var(--brown);
+    margin-bottom: 4px;
+  }
+  .s2-sub {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 17px;
+    color: var(--light-brown);
+    margin-bottom: 24px;
+  }
+
+  .honey-panel {
+    background: var(--card);
+    border: 2.5px solid var(--honey-light);
+    border-radius: 20px;
+    padding: 20px 18px;
+    margin: 12px 0;
+    box-shadow: 0 4px 16px rgba(255,179,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
+    text-align: left;
+    position: relative;
+  }
+  /* Honey drip top border effect */
+  .honey-panel::before {
+    content: '🍯🍯🍯🍯🍯🍯🍯🍯';
+    font-size: 10px;
+    position: absolute; top: -13px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg); padding: 0 8px;
+    letter-spacing: 2px;
+  }
+
+  .panel-lbl {
+    font-size: 12px; font-weight: 800;
+    color: var(--honey-dark);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  input[type="date"] {
+    background: #fff;
+    border: 2px solid var(--honey-light);
+    border-radius: 12px;
+    color: var(--brown);
+    font-family: 'Baloo 2', cursive;
+    font-size: 18px; font-weight: 600;
+    padding: 10px 14px;
+    width: 100%;
+    outline: none;
+    color-scheme: light;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input[type="date"]:focus {
+    border-color: var(--honey);
+    box-shadow: 0 0 0 3px rgba(255,179,0,0.2);
+  }
+
+  .time-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(108px,1fr));
+    gap: 8px;
+  }
+  .time-slot {
+    background: #fff;
+    border: 2px solid var(--honey-light);
+    border-radius: 12px;
+    color: var(--brown);
+    font-family: 'Baloo 2', cursive;
+    font-size: 13px; font-weight: 600;
+    padding: 10px 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .time-slot:hover {
+    background: var(--honey-light);
+    border-color: var(--honey);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255,179,0,0.3);
+  }
+  .time-slot.selected {
+    background: linear-gradient(135deg, var(--honey), var(--honey-dark));
+    border-color: var(--honey-dark);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(255,179,0,0.5);
+    transform: translateY(-2px);
+  }
+
+  textarea {
+    background: #fff;
+    border: 2px solid #BBDEFB;
+    border-radius: 12px;
+    color: var(--brown);
+    font-family: 'Patrick Hand', cursive;
+    font-size: 18px;
+    padding: 12px 14px;
+    width: 100%; resize: vertical; min-height: 70px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { border-color: var(--sky-dark); box-shadow: 0 0 0 3px rgba(2,136,209,0.15); }
+  textarea::placeholder { color: #BDBDBD; }
+
+  .confirm-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--honey), var(--honey-dark));
+    border: 3px solid var(--honey-dark);
+    color: #fff;
+    font-family: 'Baloo 2', cursive;
+    font-size: 17px; font-weight: 800;
+    padding: 16px;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 20px;
+    box-shadow: 0 5px 0 #bf360c, 0 6px 20px rgba(255,179,0,0.35);
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .confirm-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 0 #bf360c, 0 10px 28px rgba(255,179,0,0.45); }
+  .confirm-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #bf360c; }
+  .confirm-btn:disabled { opacity:0.55; cursor:not-allowed; transform:none; box-shadow: 0 3px 0 #bf360c; }
+
+  .err {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 17px; color: var(--red);
+    margin-top: 10px; min-height: 24px;
+    text-align: center;
+  }
+
+  /* ══════════ SCREEN 3 ══════════ */
+  .s3-pooh { font-size: 72px; display:block; margin: 0 auto 12px; animation: poohWobble 2s ease-in-out infinite; }
+
+  .s3-title {
+    font-size: clamp(22px, 5vw, 30px);
+    font-weight: 800; color: var(--brown);
+    line-height: 1.4; margin-bottom: 6px;
+  }
+  .s3-sub {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 18px; color: var(--light-brown);
+    margin-bottom: 22px;
+  }
+
+  .confirm-card {
+    background: var(--card);
+    border: 2.5px solid var(--honey-light);
+    border-radius: 20px;
+    padding: 20px 18px;
+    text-align: left;
+    box-shadow: 0 4px 20px rgba(255,179,0,0.2);
+    margin-bottom: 20px;
+  }
+  .c-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1.5px dashed var(--honey-light);
+    font-size: 16px; font-weight: 600; color: var(--brown);
+  }
+  .c-row:last-child { border-bottom: none; }
+  .c-row .ico { font-size: 22px; }
+  .c-row .val { color: var(--honey-dark); font-weight: 800; }
+
+  .friends-row2 { font-size: 28px; letter-spacing: 6px; }
+
+  @keyframes shake {
+    0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
+  }
+  .shake { animation: shake 0.35s ease-out !important; }
+</style>
+</head>
+<body>
+
+<!-- Clouds -->
+<script>
+  const cloudData = [
+    {w:120,h:40,top:'8%',dur:28,delay:0},
+    {w:80,h:30,top:'14%',dur:22,delay:-8},
+    {w:160,h:50,top:'5%',dur:35,delay:-15},
+    {w:90,h:32,top:'20%',dur:25,delay:-5},
+  ];
+  cloudData.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'cloud';
+    el.style.cssText = `width:${c.w}px;height:${c.h}px;top:${c.top};animation-duration:${c.dur}s;animation-delay:${c.delay}s;`;
+    el.style.before = '';
+    document.body.appendChild(el);
+  });
+
+  // Honey drops
+  const drops = ['🍯','🐝','🌿','🌸','🍃','🌼'];
+  for (let i = 0; i < 14; i++) {
+    const d = document.createElement('div');
+    d.className = 'honeydrop';
+    d.textContent = drops[i % drops.length];
+    d.style.cssText = `left:${Math.random()*95}vw;top:${Math.random()*90}vh;animation-duration:${3+Math.random()*4}s;animation-delay:${-Math.random()*5}s;font-size:${16+Math.random()*16}px;`;
+    document.body.appendChild(d);
+  }
+</script>
+
+<!-- ══ SCREEN 1 ══ -->
+<div class="screen active" id="screen1">
+  <span class="pooh-img">🐻</span>
+  <div class="honey-drip">~ from the Hundred Acre Wood ~</div>
+  <div class="main-q">Oh Bother! Can We<br>Connect for a <span>Call?</span> 🍯</div>
+  <div class="sub-q">"A day without a friend is like a pot without honey." — Pooh</div>
+
+  <div class="friends-row">🐻 🐷 🐯 🦘 🦉</div>
+
+  <div class="btn-wrap" id="btnWrap">
+    <button class="btn-yes" onclick="goToScreen2()">🍯 Yes, Let's Chat!</button>
+    <button class="btn-no" id="noBtn" onmouseenter="runAway(event)" ontouchstart="runAway(event)">No thanks</button>
+  </div>
+  <div class="taunt-box" id="tauntBox">go on… try clicking no 🐝</div>
+</div>
+
+<!-- ══ SCREEN 2 ══ -->
+<div class="screen" id="screen2">
+  <span class="s2-icon">🌿🍯🌿</span>
+  <div class="s2-title">Pick Our Meeting Spot in Time!</div>
+  <div class="s2-sub">"Think, think, think..." — pick a date & time 🐻</div>
+
+  <div class="honey-panel">
+    <div class="panel-lbl">📅 Choose a Date</div>
+    <input type="date" id="dateInput">
+  </div>
+
+  <div class="honey-panel">
+    <div class="panel-lbl">⏰ Pick a Time Slot</div>
+    <div class="time-grid" id="timeGrid"></div>
+  </div>
+
+  <div class="honey-panel">
+    <div class="panel-lbl">💬 Anything to Add? <span style="font-weight:400;color:#BDBDBD;font-size:11px">(optional)</span></div>
+    <textarea id="note" placeholder="topics, snacks, honey preferences... 🍯"></textarea>
+  </div>
+
+  <div class="err" id="errMsg"></div>
+  <button class="confirm-btn" id="confirmBtn" onclick="submitBooking()">
+    🐝 Lock It In! Let's Bee There! 🐝
+  </button>
+</div>
+
+<!-- ══ SCREEN 3 ══ -->
+<div class="screen" id="screen3">
+  <span class="s3-pooh">🎉</span>
+  <div class="s3-title">Hunny, It's Official! 🍯</div>
+  <div class="s3-sub">"We'll be friends forever, won't we Pooh?" — Piglet 🐷</div>
+  <div class="confirm-card" id="confirmCard"></div>
+  <div class="friends-row2">🐻 🐷 🐯 🦘 🦉</div>
+</div>
+
+<script>
+  // ── Time slots ──────────────────────────────
+  const slots = ['08:00 AM','09:00 AM','10:00 AM','11:00 AM','12:00 PM','01:00 PM','02:00 PM','03:00 PM','04:00 PM','05:00 PM','06:00 PM','07:00 PM'];
+  let selectedTime = null;
+  const grid = document.getElementById('timeGrid');
+  slots.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'time-slot';
+    el.textContent = s;
+    el.onclick = () => {
+      document.querySelectorAll('.time-slot').forEach(x => x.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedTime = s;
+    };
+    grid.appendChild(el);
+  });
+  document.getElementById('dateInput').min = new Date().toISOString().split('T')[0];
+
+  // ── NO button runaway ───────────────────────
+  let noCount = 0;
+  const noBtn   = document.getElementById('noBtn');
+  const tauntBox = document.getElementById('tauntBox');
+  const btnWrap  = document.getElementById('btnWrap');
+
+  const taunts = [
+    "Oh bother! That button ran into the woods! 🌿",
+    "Tigger bounced the NO button away! 🐯",
+    "Piglet hid it — too scary! 🐷",
+    "Pooh ate the NO. thought it was honey. 🍯",
+    "Eeyore took it. figured nobody wanted it anyway. 🫏",
+    "Owl declared NO officially out of order. 🦉",
+    "Rabbit chased it out of the garden! 🌱",
+    "The Heffalump scared it off! 🐘",
+    "Roo bounced on it and it disappeared! 🦘",
+    "Even the bees don't know where it went. 🐝",
+  ];
+
+  function runAway(e) {
+    if (e) e.preventDefault();
+    noCount++;
+    btnWrap.style.position = 'relative';
+    btnWrap.style.minHeight = '100px';
+    noBtn.style.position = 'absolute';
+    const wrap = btnWrap.getBoundingClientRect();
+    const maxX = Math.max(0, wrap.width - noBtn.offsetWidth - 10);
+    noBtn.style.left = (Math.random() * maxX) + 'px';
+    noBtn.style.top  = (Math.random() * 30) + 'px';
+    tauntBox.textContent = taunts[noCount % taunts.length];
+  }
+
+  function goToScreen2() {
+    document.getElementById('screen1').classList.remove('active');
+    document.getElementById('screen2').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  // ── Submit ──────────────────────────────────
+  async function submitBooking() {
+    const date = document.getElementById('dateInput').value;
+    const note = document.getElementById('note').value.trim();
+    const errMsg = document.getElementById('errMsg');
+    errMsg.textContent = '';
+
+    if (!date)         { errMsg.textContent = '🐻 Oh bother! Pick a date first!'; return; }
+    if (!selectedTime) { errMsg.textContent = '🍯 Choose a time slot, silly old bear!'; return; }
+
+    const fmt = new Date(date + 'T12:00:00').toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+    const btn = document.getElementById('confirmBtn');
+    btn.textContent = '🐝 Sending through the Hundred Acre Wood...';
+    btn.disabled = true;
+
+    try {
+      await emailjs.send('service_atdutoo', 'template_35kqgqp', {
+        to_name:   'Hey Bestie!',
+        to_email:  'PUT_YOUR_EMAIL_HERE',
+        from_name: 'Your Bestie',
+        date:      fmt,
+        time:      selectedTime,
+        topic:     note || 'No note — just vibes 🍯',
+      });
+
+      document.getElementById('confirmCard').innerHTML = `
+        <div class="c-row"><span class="ico">📅</span><div>Date<br><span class="val">${fmt}</span></div></div>
+        <div class="c-row"><span class="ico">⏰</span><div>Time<br><span class="val">${selectedTime}</span></div></div>
+        ${note ? `<div class="c-row"><span class="ico">💬</span><div>Note<br><span class="val">${note}</span></div></div>` : ''}
+        <div class="c-row"><span class="ico">📧</span><div>Status<br><span class="val">Notification sent! 🎉</span></div></div>
+      `;
+
+      document.getElementById('screen2').classList.remove('active');
+      document.getElementById('screen3').classList.add('active');
+      window.scrollTo(0, 0);
+    } catch(err) {
+      errMsg.textContent = '🐻 Oh bother! ' + (err.text || err.message || 'something went wrong, try again!');
+      btn.textContent = '🐝 Lock It In! Let\'s Bee There! 🐝';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
